@@ -20,7 +20,7 @@ namespace nss.Data
                 `InstructorId` 	INTEGER NOT NULL,
                 FOREIGN KEY(`ExerciseId`) REFERENCES `Exercise`(`Id`),
                 FOREIGN KEY(`StudentId`) REFERENCES `Student`(`Id`),
-                FOREIGN KEY(`InstructorId`) REFERENCES `Instrutor`(`Id`)
+                FOREIGN KEY(`InstructorId`) REFERENCES `Instructor`(`Id`)
             )");
         }
         public static void Seed(SqliteConnection db)
@@ -29,7 +29,7 @@ namespace nss.Data
                 SELECT null, e.Id, s.Id, i.Id
                 FROM Student s, Exercise e, Instructor i
                 WHERE e.Name = 'Overly Excited'
-                AND s.SlackHandle = '@ryan.tanay'
+                AND s.SlackHandle = '@OtherADam'
                 AND i.SlackHandle = '@coach'
             ");
 
@@ -38,7 +38,7 @@ namespace nss.Data
                 SELECT null, e.Id, s.Id, i.Id
                 FROM Student s, Exercise e, Instructor i
                 WHERE e.Name = 'Overly Excited'
-                AND s.SlackHandle = '@katerebekah'
+                AND s.SlackHandle = '@MrMan'
                 AND i.SlackHandle = '@coach'
             ");
 
@@ -47,7 +47,7 @@ namespace nss.Data
                 SELECT null, e.Id, s.Id, i.Id
                 FROM Student s, Exercise e, Instructor i
                 WHERE e.Name = 'ChickenMonkey'
-                AND s.SlackHandle = '@juanrod'
+                AND s.SlackHandle = '@Wrong'
                 AND i.SlackHandle = '@joes'
             ");
 
@@ -56,8 +56,32 @@ namespace nss.Data
                 SELECT null, e.Id, s.Id, i.Id
                 FROM Student s, Exercise e, Instructor i
                 WHERE e.Name = 'Boy Bands & Vegetables'
-                AND s.SlackHandle = '@katerebekah'
+                AND s.SlackHandle = '@OtherADam'
                 AND i.SlackHandle = '@jisie'
+            ");
+
+            db.Execute($@"INSERT INTO StudentExercise
+                SELECT null, e.Id, s.Id, i.Id
+                FROM Student s, Exercise e, Instructor i
+                WHERE e.Name = 'Tacos'
+                AND s.SlackHandle = '@SQLpants'
+                AND i.SlackHandle = '@jisie'
+            ");
+
+            db.Execute($@"INSERT INTO StudentExercise
+                SELECT null, e.Id, s.Id, i.Id
+                FROM Student s, Exercise e, Instructor i
+                WHERE e.Name = 'Shower Tears'
+                AND s.SlackHandle = '@Tastic'
+                AND i.SlackHandle = '@jisie'
+            ");
+
+            db.Execute($@"INSERT INTO StudentExercise
+                SELECT null, e.Id, s.Id, i.Id
+                FROM Student s, Exercise e, Instructor i
+                WHERE e.Name = 'Shower Tears'
+                AND s.SlackHandle = '@Person'
+                AND i.SlackHandle = '@joes'
             ");
         }
     }
