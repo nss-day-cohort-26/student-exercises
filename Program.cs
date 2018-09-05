@@ -383,6 +383,30 @@ namespace nss
                         return cohort;
                     });
 
+                    foreach (KeyValuePair<int, Cohort> cohort in allCohorts)
+                    {
+                        Console.WriteLine($"-{cohort.Value.Name}");
+
+                        foreach (Student stud in cohort.Value.Students)
+                        {
+                          List<string> studExercises = new List<string>();
+                          foreach (Exercise ex in stud.AssignedExercises)
+                          {
+                            studExercises.Add(ex.Name);
+                          }
+                          Console.WriteLine($"   {stud.SlackHandle} is a student and is assigned {String.Join(" & ", studExercises)}");
+                        }
+
+                        if (cohort.Value.Instructors.Count != 0) {
+                          foreach (Instructor inst in cohort.Value.Instructors)
+                          {
+                            Console.WriteLine($"   {inst.FirstName} {inst.LastName} is an instructor");
+                          }
+                        }
+
+
+                    }
+
             // For each cohort, list the students and instructors
             /*
                 1. Create Exercises table and seed it
