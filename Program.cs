@@ -285,14 +285,29 @@ namespace nss
               JOIN StudentExercise se on e.Id = se.ExerciseId
               JOIN Student s on se.StudentId = s.Id
               JOIN Instructor i on se.InstructorId = i.Id
-            ",(exerc, student, instruc, studentExercise) => {
-              // exerc.AssignedInfo.Add()
-              // if (!allExercises.ContainsKey(exerc.Id)) {
-              //   allExercises[exerc.Id] = exerc;
-              // }
+            ", (exerc, student, instruc, studentExercise) => {
+              studentExercise.Instructor = instruc;
+              studentExercise.Student = student;
+              studentExercise.Exercise = exerc;
+
+              if (!allExercises.ContainsKey(exerc.Id)) {
+                exerc.AssignedInfo.Add(studentExercise);
+                allExercises[exerc.Id] = exerc;
+              } else {
+                allExercises[exerc.Id].AssignedInfo.Add(studentExercise);
+              }
               return studentExercise;
             });
 
+            foreach (KeyValuePair<int, Exercise> item in allExercises)
+            {
+                Console.WriteLine($"Students assigned {item.Value.Name}: ");
+
+                foreach (StudentExercise exercise in item.Value.AssignedInfo)
+                {
+                    Console.WriteLine($"   {exercise.Student.FirstName} {exercise.Student.LastName} assigned by {exercise.Instructor.FirstName}");
+                }
+            }
 
             /*
                 1. Create Exercises table and seed it

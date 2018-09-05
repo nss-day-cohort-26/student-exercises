@@ -7,7 +7,7 @@ namespace nss.Data
         public int Id { get; set; }
         public string Name { get; set; }
         public string Language { get; set; }
-        public List<StudentExercise> AssignedInfo { get; set; }
+        public List<StudentExercise> AssignedInfo { get; set; } = new List<StudentExercise>();
     }
 
 }
