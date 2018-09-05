@@ -10,6 +10,8 @@ namespace nss.Data
         public string LastName { get; set; }
         public string SlackHandle { get; set; }
         public string Specialty { get; set; }
+
+        public string CohortId { get; set; }
         public Cohort Cohort { get; set; }
 
         public void AssignExercise(Exercise e, Student s)

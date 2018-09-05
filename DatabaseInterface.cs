@@ -69,6 +69,110 @@ namespace nss.Data
             }
         }
 
+        public static void CheckExerciseTable () {
+          SqliteConnection db = DatabaseInterface.Connection;
+          try {
+            List<Exercise> exercise = db.Query<Exercise>("SELECT Id FROM Exercise").ToList();
+          } catch (System.Exception ex) {
+            if (ex.Message.Contains("no such table")) {
+              db.Execute($@"CREATE TABLE Exercise (
+                  `Id`	integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+                  `Name`	varchar(80) NOT NULL,
+                  `Language`	varchar(80) NOT NULL
+              )");
+
+              db.Execute(@"INSERT INTO Exercise
+                        VALUES (null, 'Overly Excited', 'C#')");
+
+              db.Execute(@"INSERT INTO Exercise
+                        VALUES (null, 'ChickenMonkey', 'JavaScript')");
+
+              db.Execute(@"INSERT INTO Exercise
+                        VALUES (null, 'Boy Bands & Vegetables', 'CSS')");
+
+              db.Execute(@"INSERT INTO Exercise
+                        VALUES (null, 'Tacos', 'jQuery')");
+
+              db.Execute(@"INSERT INTO Exercise
+                        VALUES (null, 'Shower Tears', 'HTML5')");
+            }
+          }
+        }
+
+        public static void CheckStudentTable () {
+          SqliteConnection db = DatabaseInterface.Connection;
+
+          try {
+            List<Student> students = db.Query<Student>("SELECT Id FROM Student").ToList();
+          } catch (System.Exception ex) {
+            if (ex.Message.Contains("no such table")) {
+              db.Execute($@"CREATE TABLE Student (
+                `Id`	integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+                `FirstName`	varchar(80) NOT NULL,
+                `LastName`	varchar(80) NOT NULL,
+                `SlackHandle`	varchar(80) NOT NULL,
+                `CohortId`	integer NOT NULL,
+                FOREIGN KEY(`CohortId`) REFERENCES `Cohort`(`Id`)
+              )");
+
+              db.Execute($@"INSERT INTO Student
+                        SELECT null,
+                              'Adam',
+                              'Wieckert',
+                              '@OtherADam',
+                              c.Id
+                        FROM Cohort c WHERE c.Name = 'Evening Cohort 1'
+                    ");
+
+              db.Execute($@"INSERT INTO Student
+                        SELECT null,
+                              'Dude',
+                              'Man',
+                              '@MrMan',
+                              c.Id
+                        FROM Cohort c WHERE c.Name = 'Day Cohort 10'
+                    ");
+
+              db.Execute($@"INSERT INTO Student
+                        SELECT null,
+                              'Some',
+                              'Thing',
+                              '@Wrong',
+                              c.Id
+                        FROM Cohort c WHERE c.Name = 'Day Cohort 11'
+                    ");
+
+              db.Execute($@"INSERT INTO Student
+                        SELECT null,
+                              'OMG',
+                              'SQL',
+                              '@SQLpants',
+                              c.Id
+                        FROM Cohort c WHERE c.Name = 'Day Cohort 12'
+                    ");
+
+              db.Execute($@"INSERT INTO Student
+                        SELECT null,
+                              'Holy',
+                              'Crap',
+                              '@Tastic',
+                              c.Id
+                        FROM Cohort c WHERE c.Name = 'Day Cohort 13'
+                    ");
+
+              db.Execute($@"INSERT INTO Student
+                        SELECT null,
+                              'Interest',
+                              'Name',
+                              '@Person',
+                              c.Id
+                        FROM Cohort c WHERE c.Name = 'Day Cohort 21'
+                    ");
+            }
+          }
+
+        }
+
         public static void CheckInstructorsTable()
         {
             SqliteConnection db = DatabaseInterface.Connection;
