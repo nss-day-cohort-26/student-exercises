@@ -22,6 +22,11 @@ namespace nss
             SqliteConnection db = DatabaseInterface.Connection;
             DatabaseInterface.CheckCohortTable();
             DatabaseInterface.CheckInstructorsTable();
+            DatabaseInterface.CheckExerciseTable();
+            DatabaseInterface.CheckStudentTable();
+            // StudentExercise.Create(db);
+            // StudentExercise.Seed(db);
+
 
             List<Instructor> instructors = db.Query<Instructor>(@"SELECT * FROM Instructor").ToList();
             instructors.ForEach(i => Console.WriteLine($"{i.FirstName} {i.LastName}"));
@@ -216,8 +221,93 @@ namespace nss
                 Console.WriteLine(output);
             }
 
+            Dictionary<int, Cohort> allTheCohorts = new Dictionary<int, Cohort>();
 
+            db.Query<Cohort, Student, Instructor, Cohort>(@"
+                SELECT  c.Id,
+                        c.Name,
+                        s.Id,
+                        s.FirstName,
+                        s.LastName,
+                        s.SlackHandle,
+                        i.Id,
+                        i.FirstName,
+                        i.LastName,
+                        i.SlackHandle,
+                        i.CohortId
+                FROM Cohort c
+                JOIN Student s on c.Id = s.CohortId
+                LEFT JOIN Instructor i on c.Id = i.CohortId
+            ", (cohort, student, instructor) => {
+                if (!allTheCohorts.ContainsKey(cohort.Id)){
+                  allTheCohorts[cohort.Id] = cohort;
+                }
+                if (student != null) {
+                  allTheCohorts[cohort.Id].Students.Add(student);
+                }
+                if (instructor != null) {
+                  allTheCohorts[cohort.Id].Instructors.Add(instructor);
+                }
+                return cohort;
+            });
 
+            foreach (KeyValuePair<int, Cohort> cohort in allTheCohorts)
+            {
+                // int instructorCounter = 0;
+                // int studentCounter = 0;
+                // cohort.Value.Students.ForEach(item => { if(item != null) studentCounter++; });
+                // cohort.Value.Instructors.ForEach(item => { if(item != null) instructorCounter++; });
+                Console.WriteLine($@"{cohort.Value.Name} has {cohort.Value.Students.Count} student and {cohort.Value.Instructors.Count} instructors");
+            }
+
+            Dictionary<int, Exercise> allExercises = new Dictionary<int, Exercise>();
+
+            db.Query<Exercise, Student, Instructor, StudentExercise, StudentExercise>(@"
+            SELECT  e.Id,
+                e.Name,
+                e.Language,
+                s.Id,
+                s.FirstName,
+                s.LastName,
+                s.SlackHandle,
+                s.CohortId,
+                i.Id,
+                i.FirstName,
+                i.LastName,
+                i.SlackHandle,
+                i.Specialty,
+                i.CohortId,
+                se.Id,
+                se.ExerciseId,
+                se.StudentId,
+                se.InstructorId
+              FROM Exercise e
+              JOIN StudentExercise se on e.Id = se.ExerciseId
+              JOIN Student s on se.StudentId = s.Id
+              JOIN Instructor i on se.InstructorId = i.Id
+            ", (exerc, student, instruc, studentExercise) => {
+              studentExercise.Instructor = instruc;
+              studentExercise.Student = student;
+              studentExercise.Exercise = exerc;
+
+              if (!allExercises.ContainsKey(exerc.Id)) {
+                exerc.AssignedInfo.Add(studentExercise);
+                allExercises[exerc.Id] = exerc;
+              } else {
+                allExercises[exerc.Id].AssignedInfo.Add(studentExercise);
+              }
+              return studentExercise;
+            });
+
+            foreach (KeyValuePair<int, Exercise> item in allExercises)
+            {
+                Console.WriteLine($"Students assigned {item.Value.Name}: ");
+
+                foreach (StudentExercise exercise in item.Value.AssignedInfo)
+                {
+                    Console.WriteLine($"   {exercise.Student.FirstName} {exercise.Student.LastName} assigned by {exercise.Instructor.FirstName}");
+                }
+            }
 
             /*
                 1. Create Exercises table and seed it
